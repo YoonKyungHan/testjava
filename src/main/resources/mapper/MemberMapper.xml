@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.MemberMapper">
+
+    <!--
+        올해 최대 po 조회
+        prefix 예: pp2026-
+        결과 예: pp2026-003
+    -->
+    <select id="selectMaxPo" parameterType="string" resultType="string">
+        SELECT MAX(PO)
+          FROM MEMBER
+         WHERE PO LIKE CONCAT(#{prefix}, '%')
+    </select>
+
+    <!-- 회원 등록 (po 는 Service 에서 채번) -->
+    <insert id="insertMember" parameterType="com.example.vo.MemberVO">
+        INSERT INTO MEMBER (
+              PO
+            , MEMBER_ID
+            , MEMBER_NAME
+            , EMAIL
+            , PHONE
+            , AGE
+            , GENDER
+            , ADDR
+            , DEPT_CD
+            , USE_YN
+            , JOIN_DT
+        ) VALUES (
+              #{po}
+            , #{member_id}
+            , #{member_name}
+            , #{email}
+            , #{phone}
+            , #{age}
+            , #{gender}
+            , #{addr}
+            , #{dept_cd}
+            , #{use_yn}
+            , #{join_dt}
+        )
+    </insert>
+
+    <!-- 회원 수정 (po 기준) -->
+    <update id="updateMember" parameterType="com.example.vo.MemberVO">
+        UPDATE MEMBER
+           SET MEMBER_ID   = #{member_id}
+             , MEMBER_NAME = #{member_name}
+             , EMAIL       = #{email}
+             , PHONE       = #{phone}
+             , AGE         = #{age}
+             , GENDER      = #{gender}
+             , ADDR        = #{addr}
+             , DEPT_CD     = #{dept_cd}
+             , USE_YN      = #{use_yn}
+             , JOIN_DT     = #{join_dt}
+         WHERE PO          = #{po}
+    </update>
+
+</mapper>
