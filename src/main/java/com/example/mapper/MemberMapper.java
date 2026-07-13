@@ -1,20 +1,22 @@
 package com.example.mapper;
 
+import java.util.Map;
+
 import com.example.vo.MemberVO;
 
 /**
- * MyBatis Mapper 인터페이스
- * - 메서드명 = XML id
- * - 패키지+클래스명 = XML namespace
+ * MyBatis Mapper
+ * - VO 쓸 때: MemberVO
+ * - 단순 파라미터일 때: HashMap
  */
 public interface MemberMapper {
 
-    /** 해당 년도 최대 po 조회 (예: pp2026-) */
-    String selectMaxPo(String prefix);
+    /** 해당 년도 최대 po 조회 (HashMap, key: prefix) */
+    String selectMaxPo(Map<String, Object> param);
 
-    /** 회원 등록 */
+    /** 회원 등록 (VO) */
     int insertMember(MemberVO memberVO);
 
-    /** 회원 수정 */
+    /** 회원 수정 (VO) */
     int updateMember(MemberVO memberVO);
 }
