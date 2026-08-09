@@ -17,6 +17,23 @@
          WHERE PO LIKE CONCAT(#{prefix}, '%')
     </select>
 
+    <!-- 회원 단건 조회 -->
+    <select id="selectMember" parameterType="string" resultType="com.example.vo.MemberVO">
+        SELECT PO
+             , MEMBER_ID
+             , MEMBER_NAME
+             , EMAIL
+             , PHONE
+             , AGE
+             , GENDER
+             , ADDR
+             , DEPT_CD
+             , USE_YN
+             , JOIN_DT
+          FROM MEMBER
+         WHERE PO = #{value}
+    </select>
+
     <!-- 회원 등록 (VO) -->
     <insert id="insertMember" parameterType="com.example.vo.MemberVO">
         INSERT INTO MEMBER (

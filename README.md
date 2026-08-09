@@ -1,3 +1,35 @@
+# HTML → PDF 다운로드 (Spring Boot, 프론트 의존성 없음)
+
+브라우저 JS(html2pdf 등) 없이 **서버에서 PDF 생성 후 다운로드**.
+
+## 방식
+1. 서버에서 HTML 문자열 생성 (화면과 같은 데이터)
+2. OpenHTMLToPDF 로 PDF byte[] 변환
+3. `Content-Disposition: attachment` 로 응답
+
+```
+화면 버튼 → GET /pdf/download.do → PdfService.htmlToPdf() → PDF 다운로드
+```
+
+## Maven
+```xml
+<dependency>
+  <groupId>com.openhtmltopdf</groupId>
+  <artifactId>openhtmltopdf-pdfbox</artifactId>
+  <version>1.0.10</version>
+</dependency>
+```
+
+## 주의
+- “지금 보고 있는 브라우저 DOM을 그대로 캡처”는 프론트/헤드리스 브라우저 없이 불가
+- 실무는 **같은 데이터로 서버 HTML을 다시 만들어** PDF화 하는 방식
+- HTML은 XHTML에 가깝게 (`<br />`, 닫는 태그) 작성
+- 한글 깨지면 한글 폰트 파일 등록 필요 (`builder.useFont(...)`)
+
+예제: `PdfController`, `PdfService`
+
+---
+
 # JSP 레이어팝업 → 부모로 값 넘기기
 
 내부망 JSP + jQuery 프로젝트에서 흔한 방식 정리.

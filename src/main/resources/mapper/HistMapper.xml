@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.HistMapper">
+
+    <!-- 이력 헤더 등록 (Oracle SEQUENCE) -->
+    <insert id="insertHistEvent" parameterType="com.example.vo.HistEventVO">
+        <selectKey keyProperty="hist_id" resultType="long" order="BEFORE">
+            SELECT SEQ_HIST_EVENT.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO HIST_EVENT (
+              HIST_ID
+            , ENTITY_TYPE
+            , TABLE_NM
+            , ENTITY_ID
+            , ACTION_TYPE
+            , ACTOR_ID
+            , ACTOR_NM
+            , REASON
+            , REQ_IP
+            , TRACE_ID
+            , CHANGED_AT
+        ) VALUES (
+              #{hist_id}
+            , #{entity_type}
+            , #{table_nm}
+            , #{entity_id}
+            , #{action_type}
+            , #{actor_id}
+            , #{actor_nm}
+            , #{reason}
+            , #{req_ip}
+            , #{trace_id}
+            , SYSTIMESTAMP
+        )
+    </insert>
+
+    <!-- before / after 스냅샷 등록 -->
+    <insert id="insertHistSnapshot" parameterType="com.example.vo.HistEventVO">
+        INSERT INTO HIST_SNAPSHOT (
+              HIST_ID
+            , BEFORE_DATA
+            , AFTER_DATA
+        ) VALUES (
+              #{hist_id}
+            , #{before_data}
+            , #{after_data}
+        )
+    </insert>
+
+    <!-- 엔티티별 이력 목록 (스냅샷 제외, 목록용) -->
+    <select id="selectHistList" parameterType="hashmap" resultType="com.example.vo.HistEventVO">
+        SELECT HIST_ID
+             , ENTITY_TYPE
+             , TABLE_NM
+             , ENTITY_ID
+             , ACTION_TYPE
+             , ACTOR_ID
+             , ACTOR_NM
+             , REASON
+             , REQ_IP
+             , TRACE_ID
+             , CHANGED_AT
+          FROM HIST_EVENT
+         WHERE ENTITY_TYPE = #{entity_type}
+           AND ENTITY_ID   = #{entity_id}
+         ORDER BY CHANGED_AT DESC, HIST_ID DESC
+    </select>
+
+    <!-- 이력 단건 + before/after -->
+    <select id="selectHistDetail" parameterType="long" resultType="com.example.vo.HistEventVO">
+        SELECT E.HIST_ID
+             , E.ENTITY_TYPE
+             , E.TABLE_NM
+             , E.ENTITY_ID
+             , E.ACTION_TYPE
+             , E.ACTOR_ID
+             , E.ACTOR_NM
+             , E.REASON
+             , E.REQ_IP
+             , E.TRACE_ID
+             , E.CHANGED_AT
+             , S.BEFORE_DATA
+             , S.AFTER_DATA
+          FROM HIST_EVENT E
+          LEFT JOIN HIST_SNAPSHOT S
+            ON S.HIST_ID = E.HIST_ID
+         WHERE E.HIST_ID = #{value}
+    </select>
+
+</mapper>
